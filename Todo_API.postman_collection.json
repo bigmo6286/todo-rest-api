@@ -1,5 +1,6 @@
 {
   "info": {
+    "_postman_id": "b1a7c0de-7000-4a2b-9f10-0c0de0000001",
     "name": "Todo REST API",
     "description": "CRUD demo for the Flask + SQLAlchemy Todo API. Import this file into Postman, then run the requests top to bottom. Base URL is the {{base_url}} collection variable (default http://127.0.0.1:5000).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
