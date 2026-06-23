@@ -120,7 +120,11 @@ python run.py
 Leave it running. It serves on **http://127.0.0.1:5000**.
 
 ### 2. Import the Postman collection (one-time setup)
-1. Open Postman.
+> **Use the Postman desktop app**, not the VS Code Postman extension — the
+> extension's import is unreliable and may say "could not import" even though the
+> file is valid. The desktop app imports it fine.
+
+1. Open the **Postman desktop app**.
 2. Click **Import** (top-left).
 3. Choose the file **`Todo_API.postman_collection.json`** from this project folder
    (drag-and-drop also works).
