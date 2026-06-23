@@ -15,11 +15,11 @@ is a real, live "watch the table get created" moment.
 
 ### 1. Prove the `todos` table does NOT exist yet
 ```powershell
-python -c "from app import create_app; from app.extensions import db; a=create_app(); a.app_context().push(); print(db.session.execute(db.text(\"SHOW TABLES LIKE 'todos'\")).fetchall())"
+python check_table.py
 ```
 Expected output:
 ```
-[]
+todos table does NOT exist  ->  run:  flask db upgrade
 ```
 **Say:** "The database is empty — there is no `todos` table yet."
 
@@ -43,11 +43,11 @@ INFO  [alembic.runtime.migration] Running upgrade  -> 855e25af4020, create todos
 
 ### 4. Prove the table now exists
 ```powershell
-python -c "from app import create_app; from app.extensions import db; a=create_app(); a.app_context().push(); print(db.session.execute(db.text(\"SHOW TABLES LIKE 'todos'\")).fetchall())"
+python check_table.py
 ```
 Expected output:
 ```
-[('todos',)]
+todos table EXISTS
 ```
 
 ### 5. (Bonus) Show migrations are reversible
