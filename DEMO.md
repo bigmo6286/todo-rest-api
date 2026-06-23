@@ -94,10 +94,15 @@ without touching existing rows."
 flask db upgrade
 ```
 
-**e) Prove it works** — create a todo using the new field:
-```powershell
-curl -X POST http://127.0.0.1:5000/api/todos -H "Content-Type: application/json" -d "{\"title\": \"Pay rent\", \"priority\": \"high\"}"
+**e) Prove it works** — in Postman, open request **1 (CREATE todo)**, edit the
+**Body** to include the new field, and Send:
+```json
+{
+  "title": "Pay rent",
+  "priority": "high"
+}
 ```
+The response now includes `"priority": "high"`.
 
 > **Why `nullable=True` + a default?** If you add a *required* column with no
 > default to a table that already has rows, the migration fails — the existing
@@ -106,72 +111,52 @@ curl -X POST http://127.0.0.1:5000/api/todos -H "Content-Type: application/json"
 
 ---
 
-## Part B — The CRUD REST API (show it working)
+## Part B — The CRUD REST API in Postman (show it working)
 
 ### 1. Start the server
 ```powershell
 python run.py
 ```
 Leave it running. It serves on **http://127.0.0.1:5000**.
-Open a **second** terminal for the requests below.
 
-### 2. Confirm it's alive
-```powershell
-curl http://127.0.0.1:5000/
-```
-Returns a JSON summary of every endpoint.
+### 2. Import the Postman collection (one-time setup)
+1. Open Postman.
+2. Click **Import** (top-left).
+3. Choose the file **`Todo_API.postman_collection.json`** from this project folder
+   (drag-and-drop also works).
+4. A collection called **"Todo REST API"** appears in the left sidebar with all
+   the requests already built.
 
-### 3. CREATE a todo  (POST → 201 Created)
-```powershell
-curl -X POST http://127.0.0.1:5000/api/todos -H "Content-Type: application/json" -d "{\"title\": \"Buy milk\", \"description\": \"2 litres\"}"
-```
-**Say:** "POST creates a record and returns `201 Created` with the new `id`."
+The base URL is stored as a collection **variable** `{{base_url}}`
+(default `http://127.0.0.1:5000`). To change it: click the collection → **Variables**
+tab → edit the value. **Say:** "Using a variable means I set the address in one
+place instead of editing every request."
 
-### 4. READ all  (GET → 200)
-```powershell
-curl http://127.0.0.1:5000/api/todos
-```
+### 3. Run the requests top to bottom
+Click each request in the sidebar, then press the blue **Send** button. Watch the
+response body AND the **status code** (shown top-right of the response panel).
 
-### 5. READ one  (GET → 200)
-```powershell
-curl http://127.0.0.1:5000/api/todos/1
-```
+| # | Request | What to point out | Status |
+|---|---------|-------------------|--------|
+| 0 | Health check | Lists every endpoint — proves the API is up | 200 |
+| 1 | CREATE todo | New record returned with a generated `id` | **201** |
+| 2 | READ all | The todo you just made appears | 200 |
+| 3 | READ one | Fetches a single todo by id | 200 |
+| 4 | UPDATE partial (PATCH) | Only `completed` changes — "PATCH = partial" | 200 |
+| 5 | UPDATE full (PUT) | Whole record replaced — "PUT = full replace" | 200 |
+| 6 | VALIDATION error | No title → `{"error": "title is required"}` | **400** |
+| 7 | NOT FOUND | Unknown id → `{"error": "Todo not found"}` | **404** |
+| 8 | DELETE | Removes the todo | 200 |
 
-### 6. UPDATE part of it  (PATCH → 200) — mark complete
-```powershell
-curl -X PATCH http://127.0.0.1:5000/api/todos/1 -H "Content-Type: application/json" -d "{\"completed\": true}"
-```
-**Say:** "PATCH updates only the field I send — here, just `completed`."
+**After request 8 (DELETE):** click request **3 (READ one)** and Send again —
+it now returns **404**, proving the record is gone.
 
-### 7. UPDATE everything  (PUT → 200)
-```powershell
-curl -X PUT http://127.0.0.1:5000/api/todos/1 -H "Content-Type: application/json" -d "{\"title\": \"Buy oat milk\", \"description\": \"1 litre\", \"completed\": false}"
-```
-**Say:** "PUT replaces the whole record — that's the difference from PATCH."
+> **Note on ids:** requests 3, 4, 5, 8 use id `1`. If your created todo has a
+> different id (e.g. you deleted some during practice), edit the number at the end
+> of the URL to match the `id` shown in request 1's response.
 
-### 8. Show VALIDATION  (POST without title → 400)
-```powershell
-curl -X POST http://127.0.0.1:5000/api/todos -H "Content-Type: application/json" -d "{\"description\": \"no title\"}"
-```
-Returns `{"error": "title is required"}` with status **400**.
-
-### 9. Show NOT FOUND  (GET a missing id → 404)
-```powershell
-curl http://127.0.0.1:5000/api/todos/999999
-```
-Returns `{"error": "Todo not found"}` with status **404**.
-
-### 10. DELETE  (DELETE → 200)
-```powershell
-curl -X DELETE http://127.0.0.1:5000/api/todos/1
-```
-Then read it again to prove it's gone (returns **404**):
-```powershell
-curl http://127.0.0.1:5000/api/todos/1
-```
-
-> **Tip:** If you prefer a GUI over `curl`, use **Postman** or your browser's
-> REST client with the same URLs, methods, and JSON bodies.
+> **Editing a request body:** click the request → **Body** tab → **raw** (JSON).
+> The JSON is already filled in; change the values to demo different data.
 
 ---
 

@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "Todo REST API",
+    "description": "CRUD demo for the Flask + SQLAlchemy Todo API. Import this file into Postman, then run the requests top to bottom. Base URL is the {{base_url}} collection variable (default http://127.0.0.1:5000).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health check (GET /)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Confirms the API is running and lists every endpoint."
+      }
+    },
+    {
+      "name": "1. CREATE todo (POST /api/todos) -> 201",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Buy milk\",\n  \"description\": \"2 litres\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos"]
+        },
+        "description": "Creates a new todo. Returns 201 Created with the new record (note the generated id)."
+      }
+    },
+    {
+      "name": "2. READ all (GET /api/todos) -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos"]
+        },
+        "description": "Returns every todo, newest first."
+      }
+    },
+    {
+      "name": "3. READ one (GET /api/todos/1) -> 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/todos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos", "1"]
+        },
+        "description": "Returns a single todo by id. Change the 1 if your id differs."
+      }
+    },
+    {
+      "name": "4. UPDATE partial (PATCH /api/todos/1) -> 200",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"completed\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos", "1"]
+        },
+        "description": "PATCH updates ONLY the fields sent -- here, just marks it completed."
+      }
+    },
+    {
+      "name": "5. UPDATE full (PUT /api/todos/1) -> 200",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Buy oat milk\",\n  \"description\": \"1 litre\",\n  \"completed\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos", "1"]
+        },
+        "description": "PUT replaces the WHOLE record (title required) -- the difference from PATCH."
+      }
+    },
+    {
+      "name": "6. VALIDATION error (POST no title) -> 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"no title\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/todos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos"]
+        },
+        "description": "Missing title -> 400 Bad Request with {\"error\": \"title is required\"}."
+      }
+    },
+    {
+      "name": "7. NOT FOUND (GET /api/todos/999999) -> 404",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/todos/999999",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos", "999999"]
+        },
+        "description": "Unknown id -> 404 Not Found with {\"error\": \"Todo not found\"}."
+      }
+    },
+    {
+      "name": "8. DELETE (DELETE /api/todos/1) -> 200",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/todos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "todos", "1"]
+        },
+        "description": "Deletes the todo. Re-run request 3 afterwards to show it now returns 404."
+      }
+    }
+  ]
+}
